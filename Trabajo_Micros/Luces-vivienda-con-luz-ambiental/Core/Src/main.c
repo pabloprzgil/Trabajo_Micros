@@ -55,18 +55,17 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM10_Init(void);
+/* USER CODE BEGIN PFP */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	flag=1;
 }
-/* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t LDR_valor;
 
-uint8_t HIGH = 50;
+uint8_t HIGH = 150;
 
 uint8_t LOW = 30;
 /* USER CODE END 0 */
@@ -110,44 +109,52 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+	  	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
+	 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
+	 	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
+	 	  while(!flag){
+	 		  	  //ESTADO DE ESPERA PARA QUE EL USUARIO QUIERA REALIZAR LA MEDICIÓN
+	 		  	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET);
+	 		  	HAL_Delay(1500);
+	 		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+	 		    HAL_Delay(1500);
+	 		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+	 		    HAL_Delay(500);
 
-	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
-	  while(!flag){
-		  	  //ESTADO DE ESPERA PARA QUE EL USUARIO QUIERA REALIZAR LA MEDICIÓN
-		  	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET);
-		  	HAL_Delay(1500);
-		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
-		    HAL_Delay(1500);
-		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
-		    HAL_Delay(500);
+	 		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
+	 		    HAL_Delay(1500);
+	 		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
+	 		    HAL_Delay(1500);
+	 		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
 
-		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
-		    HAL_Delay(1500);
-		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
-		    HAL_Delay(1500);
-		    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
-
-	  }
-	  while(flag){//EL USUARIO AL PULSAR EL PA0, OBTINE UNA LUZ CORRESPONDIENTE A LA ILUMINACIÓN AMBENTE
-		  HAL_ADC_Start(&hadc1);
-		  //Se usa polling, se pasa el puntero y el tiempo
-		  if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK){
-			  LDR_valor=HAL_ADC_GetValue(&hadc1);
-		  }
-		  if(LDR_valor<LOW)
-			  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET);
-		  else if (LDR_valor<HIGH)
-			  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
-		  else	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
-		  HAL_ADC_Stop(&hadc1);
-		  HAL_Delay(5000);//Aquí se podría hacer el TEMPORIZADOR
-		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
-		  flag=0;
-	  }
+	 	  }
+	 	  while(flag){//EL USUARIO AL PULSAR EL PA0, OBTINE UNA LUZ CORRESPONDIENTE A LA ILUMINACIÓN AMBENTE
+	 		  HAL_ADC_Start(&hadc1);
+	 		  //Se usa polling, se pasa el puntero y el tiempo
+	 		  if(HAL_ADC_PollForConversion(&hadc1, 5)==HAL_OK){
+	 			  LDR_valor=HAL_ADC_GetValue(&hadc1);
+	 		  }
+	 		  if(LDR_valor<LOW){
+	 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET);
+	 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
+	 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
+	 		  }
+	 		  else if (LDR_valor<HIGH)
+	 			  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+	 		  else	{
+	 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+	 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
+	 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+	 		  }
+	 		  HAL_ADC_Stop(&hadc1);
+	 		  HAL_Delay(5000);//Aquí se podría hacer el TEMPORIZADOR
+	 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET);
+	 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
+	 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
+	 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
+	 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+	 		  flag=0;
+	 	  }
 
     /* USER CODE BEGIN 3 */
   }
@@ -294,7 +301,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4
+                          |GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PA0 */
   GPIO_InitStruct.Pin = GPIO_PIN_0;
@@ -302,8 +310,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD1 PD2 PD3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+  /*Configure GPIO pins : PD1 PD2 PD3 PD4
+                           PD5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4
+                          |GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
